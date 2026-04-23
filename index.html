@@ -1,0 +1,611 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Focuse — резиденции и архитектурные дома</title>
+  <link rel="stylesheet" href="styles/base.css" />
+  <style>
+    /* ======================= HERO ======================= */
+    .hero {
+      position: relative;
+      min-height: 920px;
+      padding: 140px 40px 60px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .hero-headline {
+      position: relative;
+      z-index: 3;
+      pointer-events: none;
+    }
+
+    .hero-eyebrow {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .hero-eyebrow .dot-line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, var(--line), transparent);
+      margin: 0 20px;
+    }
+
+    .hero h1 {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(90px, 16vw, 240px);
+      line-height: 0.85;
+      letter-spacing: -0.045em;
+      color: var(--ink);
+      position: relative;
+      z-index: 3;
+    }
+    .hero h1 .subword {
+      display: block;
+      font-style: italic;
+      color: var(--accent);
+      font-size: clamp(54px, 9vw, 140px);
+      letter-spacing: -0.02em;
+      font-weight: 400;
+      margin-top: -0.05em;
+      margin-left: 0.1em;
+      position: relative;
+      z-index: 4;
+    }
+    .hero h1 .since {
+      display: inline-block;
+      vertical-align: middle;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      color: var(--muted);
+      margin-left: 16px;
+      text-transform: uppercase;
+      font-style: normal;
+    }
+
+    /* arch image — right-aligned, bottom, clipped */
+    .hero-image {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      width: 55%;
+      height: 62%;
+      z-index: 2;
+      background-image: url('https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1600&q=80');
+      background-size: cover;
+      background-position: center;
+      border-radius: 8px 0 0 8px;
+      filter: saturate(0.95) contrast(1.02);
+      -webkit-mask-image: linear-gradient(to left, black 82%, transparent 100%);
+      mask-image: linear-gradient(to left, black 82%, transparent 100%);
+      box-shadow: -20px 0 60px -20px rgba(20,18,16,0.1);
+    }
+    .hero-image::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(180deg, rgba(241,236,228,0) 60%, rgba(241,236,228,0.15) 100%);
+    }
+
+    /* hero body: featured card + lead text, side-by-side, bottom */
+    .hero-body {
+      position: relative;
+      z-index: 3;
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 48px;
+      align-items: end;
+      margin-top: auto;
+      padding-top: 60px;
+    }
+    .hero-lead {
+      font-family: var(--mono);
+      font-size: 10px;
+      line-height: 1.8;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ink-2);
+      max-width: 480px;
+      padding-bottom: 8px;
+    }
+
+    /* featured project glass card — inline at bottom, side-by-side with lead */
+    .featured-card {
+      position: relative;
+      z-index: 5;
+      width: 380px;
+      padding: 26px 26px 22px;
+      background: rgba(241, 236, 228, 0.55);
+      backdrop-filter: blur(28px) saturate(1.15);
+      -webkit-backdrop-filter: blur(28px) saturate(1.15);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      border-radius: 10px;
+    }
+    .featured-card .ft-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+    .featured-card h3 {
+      font-family: var(--serif);
+      font-weight: 400;
+      font-size: 22px;
+      letter-spacing: -0.01em;
+      margin-bottom: 16px;
+      line-height: 1.1;
+    }
+    .featured-card p {
+      font-size: 12px;
+      line-height: 1.5;
+      color: var(--ink-2);
+      margin-bottom: 24px;
+      font-family: var(--mono);
+      letter-spacing: 0.03em;
+    }
+    .featured-stats {
+      display: flex;
+      gap: 32px;
+      align-items: flex-end;
+      margin-bottom: 20px;
+    }
+    .featured-stats .stat .num {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: 54px;
+      line-height: 1;
+      letter-spacing: -0.03em;
+    }
+    .featured-stats .stat .u {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      color: var(--muted);
+      text-transform: uppercase;
+      display: block;
+      margin-top: 6px;
+    }
+    .featured-card .read-more {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      padding-top: 16px;
+      border-top: 1px solid var(--line);
+      color: var(--ink);
+      pointer-events: auto;
+    }
+    .featured-card .read-more::before {
+      content: '+';
+      width: 18px; height: 18px; border-radius: 50%;
+      background: var(--accent); color: white;
+      display: grid; place-items: center;
+      font-size: 12px; line-height: 1;
+    }
+
+    /* scroll circle right */
+    .scroll-mark {
+      position: absolute;
+      right: 80px;
+      top: 260px;
+      z-index: 6;
+      pointer-events: auto;
+    }
+
+    /* Project switcher dots */
+    .hero-switcher {
+      position: absolute;
+      right: 40px;
+      bottom: 60px;
+      z-index: 4;
+      display: flex;
+      gap: 8px;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      align-items: center;
+      text-transform: uppercase;
+    }
+    .hero-switcher .num {
+      color: var(--ink);
+    }
+    .hero-switcher .total { color: var(--muted); }
+
+    /* ======================= WHY SECTION ======================= */
+    .why {
+      padding: 120px 40px 60px;
+      position: relative;
+    }
+    .why-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      border-top: 1px solid var(--line);
+      margin-top: 48px;
+    }
+    .why-item {
+      padding: 36px 28px 32px;
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      flex-direction: column;
+      min-height: 280px;
+      position: relative;
+    }
+    .why-item:nth-child(4n) { border-right: none; }
+    .why-item .num {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      color: var(--muted);
+      margin-bottom: auto;
+    }
+    .why-item h3 {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: 32px;
+      letter-spacing: -0.02em;
+      line-height: 1.05;
+      margin: 20px 0 16px;
+    }
+    .why-item h3 em {
+      font-style: italic;
+      color: var(--accent);
+      font-weight: 400;
+    }
+    .why-item p {
+      font-size: 13px;
+      line-height: 1.55;
+      color: var(--ink-2);
+    }
+    .why-item:hover { background: var(--bg-3); }
+    .why-item { transition: background .3s; }
+
+    /* big stat row */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      padding: 80px 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .stats-row .cell {
+      padding: 0 28px;
+      border-right: 1px solid var(--line);
+    }
+    .stats-row .cell:last-child { border-right: none; }
+    .stats-row .big {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(64px, 7vw, 104px);
+      line-height: 1;
+      letter-spacing: -0.03em;
+    }
+    .stats-row .big em {
+      font-style: italic;
+      color: var(--accent);
+      font-weight: 400;
+    }
+    .stats-row .desc {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 16px;
+      line-height: 1.6;
+    }
+
+    /* ======================= COLLECTIONS TEASER ======================= */
+    .collections {
+      padding: 120px 40px 100px;
+    }
+    .coll-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+    }
+    .coll-card {
+      position: relative;
+      border-radius: 8px;
+      overflow: hidden;
+      aspect-ratio: 3/4;
+      background: var(--bg-3);
+      cursor: pointer;
+      transition: transform .4s ease;
+    }
+    .coll-card:hover { transform: translateY(-4px); }
+    .coll-card .bg {
+      position: absolute; inset: 0;
+      background-size: cover;
+      background-position: center;
+      transition: transform .8s ease;
+    }
+    .coll-card:hover .bg { transform: scale(1.05); }
+    .coll-card::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(180deg, transparent 40%, rgba(20,18,16,0.7) 100%);
+    }
+    .coll-card .meta {
+      position: absolute;
+      left: 20px; right: 20px; bottom: 20px;
+      z-index: 2;
+      color: var(--white);
+    }
+    .coll-card .meta .tag {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      opacity: 0.8;
+      margin-bottom: 8px;
+    }
+    .coll-card .meta h4 {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: 28px;
+      letter-spacing: -0.02em;
+      line-height: 1.05;
+    }
+    .coll-card .meta h4 em { font-style: italic; color: var(--accent); font-weight: 400; }
+
+    .coll-cta {
+      margin-top: 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* responsive */
+    @media (max-width: 900px) {
+      .hero { padding: 90px 20px 40px; min-height: auto; }
+      .hero h1 { font-size: clamp(64px, 16vw, 96px); }
+      .hero h1 .subword { font-size: clamp(40px, 10vw, 64px); }
+      .hero h1 .since { display: block; margin-left: 0; margin-top: 8px; font-size: 9px; }
+      .hero-eyebrow { flex-direction: column; align-items: flex-start; gap: 8px; font-size: 9px; }
+      .hero-eyebrow .dot-line { display: none; }
+      .hero-body { grid-template-columns: 1fr; gap: 24px; padding-top: 32px; }
+      .featured-card { width: 100%; padding: 20px; }
+      .featured-card h3 { font-size: 18px; }
+      .featured-stats .stat .num { font-size: 42px; }
+      .hero-image { width: 100%; height: 40%; opacity: 0.35; }
+      .scroll-mark { display: none; }
+      .hero-switcher { bottom: 20px; right: 20px; font-size: 9px; }
+
+      .why, .collections { padding: 60px 20px; }
+      .why-grid { grid-template-columns: 1fr; }
+      .why-item { border-right: none !important; min-height: auto; padding: 24px 0; }
+      .why-item h3 { font-size: 26px; }
+      .stats-row { grid-template-columns: 1fr 1fr; padding: 40px 0; }
+      .stats-row .cell { padding: 16px; border-bottom: 1px solid var(--line); }
+      .stats-row .cell:nth-child(2n) { border-right: none; }
+      .stats-row .big { font-size: clamp(44px, 12vw, 64px); }
+      .coll-grid { grid-template-columns: 1fr; }
+      .coll-cta { flex-direction: column; align-items: flex-start; gap: 16px; }
+    }
+
+    @media (max-width: 640px) {
+      .hero { padding: 76px 16px 32px; }
+      .hero h1 { font-size: clamp(56px, 18vw, 80px); line-height: 0.9; }
+      .hero h1 .subword { font-size: clamp(36px, 12vw, 56px); }
+      .featured-stats { gap: 20px; flex-wrap: wrap; }
+      .featured-stats .stat .num { font-size: 36px; }
+      .why, .collections { padding: 48px 16px; }
+      .why-item h3 { font-size: 22px; }
+      .coll-card { aspect-ratio: 4/5; }
+    }
+  </style>
+</head>
+<template id="__bundler_thumbnail" data-bg-color="#F1ECE4">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#F1ECE4"/>
+    <text x="600" y="440" text-anchor="middle" font-family="Fraunces, Times New Roman, serif" font-weight="300" font-size="260" letter-spacing="-8" fill="#1A1817">FOCUSE</text>
+    <text x="720" y="560" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="120" fill="#E8743A">резиденции</text>
+    <text x="600" y="680" text-anchor="middle" font-family="monospace" font-size="22" letter-spacing="6" fill="#8B827A">— SINCE 2008 —</text>
+  </svg>
+</template>
+<body data-page="home">
+
+<div data-chrome="top"></div>
+
+<main class="shell">
+  <div data-chrome="nav"></div>
+
+  <!-- ===================== HERO ===================== -->
+  <section class="hero">
+    <div class="hero-image" id="heroImage"></div>
+
+    <div class="scroll-mark">
+      <div class="scroll-circle">
+        <div class="ring-text">
+          <svg viewBox="0 0 130 130">
+            <defs>
+              <path id="circ" d="M 65,65 m -54,0 a 54,54 0 1,1 108,0 a 54,54 0 1,1 -108,0"/>
+            </defs>
+            <text>
+              <textPath href="#circ">SCROLL · TO · DISCOVER · FOCUSE · ESTATE · </textPath>
+            </text>
+          </svg>
+        </div>
+        <div class="plus-big">+</div>
+      </div>
+    </div>
+
+    <div class="hero-headline">
+      <div class="hero-eyebrow">
+        <span>● Открыт приём заявок на 2026</span>
+        <span class="dot-line"></span>
+        <span>Резиденции · Виллы · Пентхаусы</span>
+      </div>
+      <h1>
+        FOCUSE
+        <span class="subword">резиденции <span class="since">[ с 2008 года ]</span></span>
+      </h1>
+    </div>
+
+    <div class="hero-body">
+      <div class="featured-card">
+        <div class="ft-label">Проект месяца — Новорижское ш.</div>
+        <h3>Villa Méridienne — Коллекция «Silent Coast»</h3>
+        <p>Частная резиденция 840 м² на участке 0,8 га. Архитектура из известняка и дуба, панорамы леса и приватная гавань.</p>
+        <div class="featured-stats">
+          <div class="stat">
+            <div class="num">12</div>
+            <div class="u">резиденций <br/>в коллекции</div>
+          </div>
+          <div class="stat">
+            <div class="num">840<span style="font-size:20px; color:var(--muted);"> м²</span></div>
+            <div class="u">средняя <br/>площадь дома</div>
+          </div>
+        </div>
+        <a href="projects.html" class="read-more">Смотреть проект</a>
+      </div>
+
+      <div class="hero-lead">
+        С 2008 года Focuse проектирует и продаёт частные резиденции в самых тихих местах России и Европы. Наши дома — это не недвижимость. Это архитектура, в которую возвращаются.
+      </div>
+    </div>
+
+    <div class="hero-switcher">
+      <span class="num">01</span>
+      <span>/</span>
+      <span class="total">12</span>
+      <span style="width:60px; height:1px; background: var(--ink); margin-left: 8px;"></span>
+    </div>
+  </section>
+
+  <!-- ===================== WHY FOCUSE ===================== -->
+  <section class="why" id="why">
+    <div class="section-head">
+      <h2>Почему <em>Focuse.</em></h2>
+      <div class="side">
+        Семнадцать лет работы с архитектурой, которую не делают серийно. Пять причин, по которым нас выбирают семьи, которые строят не дом — а дом своей жизни.
+      </div>
+    </div>
+
+    <div class="why-grid">
+      <div class="why-item">
+        <span class="num">01 — Подход</span>
+        <h3>Авторская <em>архитектура</em></h3>
+        <p>Каждая резиденция — индивидуальный проект от бюро с мировыми премиями. Ни один дом не повторяется.</p>
+      </div>
+      <div class="why-item">
+        <span class="num">02 — Земля</span>
+        <h3>Закрытые <em>локации</em></h3>
+        <p>Работаем только с участками в тихих охраняемых местностях — лес, побережье, горная долина.</p>
+      </div>
+      <div class="why-item">
+        <span class="num">03 — Материалы</span>
+        <h3>Натуральный <em>камень и дуб</em></h3>
+        <p>Известняк, мрамор, цельный массив дуба. Все материалы — с европейских каменоломен, которые мы знаем лично.</p>
+      </div>
+      <div class="why-item">
+        <span class="num">04 — Сопровождение</span>
+        <h3>Один <em>куратор</em></h3>
+        <p>От выбора участка до последней мебели — с вами работает один человек. Мы не передаём клиента по цепочке.</p>
+      </div>
+      <div class="why-item">
+        <span class="num">05 — Сроки</span>
+        <h3>Ключ за <em>18 месяцев</em></h3>
+        <p>Собственная строительная команда и фиксированный график. Штраф в договоре за каждый день просрочки.</p>
+      </div>
+      <div class="why-item">
+        <span class="num">06 — Цена</span>
+        <h3>Прозрачный <em>бюджет</em></h3>
+        <p>Смета зафиксирована в рублях на старте и не меняется. Никаких «непредвиденных расходов» по ходу стройки.</p>
+      </div>
+      <div class="why-item">
+        <span class="num">07 — Приватность</span>
+        <h3>Соглашение <em>NDA</em></h3>
+        <p>Никаких публикаций, соцсетей и рекламы ваших домов. Ваши адреса не знает даже наш отдел маркетинга.</p>
+      </div>
+      <div class="why-item">
+        <span class="num">08 — После</span>
+        <h3>Сервис <em>на 10 лет</em></h3>
+        <p>Гарантия на инженерию, плановое обслуживание, сезонная консервация. Собственный сервисный отдел.</p>
+      </div>
+    </div>
+
+    <div class="stats-row">
+      <div class="cell">
+        <div class="big"><em>184</em></div>
+        <div class="desc">Резиденций <br/>построено с 2008</div>
+      </div>
+      <div class="cell">
+        <div class="big">96<span style="font-size:30%; color: var(--muted);">%</span></div>
+        <div class="desc">Клиентов <br/>по рекомендации</div>
+      </div>
+      <div class="cell">
+        <div class="big">17</div>
+        <div class="desc">Архитектурных <br/>премий России и EU</div>
+      </div>
+      <div class="cell">
+        <div class="big"><em>₽ 0</em></div>
+        <div class="desc">Судебных исков <br/>за 17 лет работы</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== COLLECTIONS TEASER ===================== -->
+  <section class="collections">
+    <div class="section-head">
+      <h2>Наши <em>коллекции</em></h2>
+      <div class="side">
+        Три закрытые серии. Каждая со своим характером, локацией и архитектурным почерком. Всего 34 резиденции в работе на 2026 год.
+      </div>
+    </div>
+
+    <div class="coll-grid">
+      <a href="projects.html" class="coll-card">
+        <div class="bg" style="background-image: url('https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=900&q=80');"></div>
+        <div class="meta">
+          <div class="tag">— Коллекция I · лес</div>
+          <h4>Silent <em>Coast</em></h4>
+        </div>
+      </a>
+      <a href="projects.html" class="coll-card">
+        <div class="bg" style="background-image: url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=900&q=80');"></div>
+        <div class="meta">
+          <div class="tag">— Коллекция II · побережье</div>
+          <h4>Maison <em>Lumière</em></h4>
+        </div>
+      </a>
+      <a href="projects.html" class="coll-card">
+        <div class="bg" style="background-image: url('https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=900&q=80');"></div>
+        <div class="meta">
+          <div class="tag">— Коллекция III · горы</div>
+          <h4>Alpen <em>Refuge</em></h4>
+        </div>
+      </a>
+    </div>
+
+    <div class="coll-cta">
+      <div class="mono" style="color: var(--muted);">→ 34 резиденции · 12 в продаже</div>
+      <a href="projects.html" class="btn btn-primary">
+        Смотреть все проекты <span class="plus">→</span>
+      </a>
+    </div>
+  </section>
+
+  <div data-chrome="bottom"></div>
+</main>
+
+<script src="scripts/chrome.js"></script>
+</body>
+</html>

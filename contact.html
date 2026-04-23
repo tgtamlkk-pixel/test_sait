@@ -1,0 +1,719 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Заявка — Focuse</title>
+  <link rel="stylesheet" href="styles/base.css" />
+  <style>
+    .c-head {
+      padding: 130px 40px 40px;
+      border-bottom: 1px solid var(--line);
+    }
+    .c-head .top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 40px;
+      margin-bottom: 20px;
+    }
+    .c-head h1 {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(72px, 11vw, 180px);
+      line-height: 0.88;
+      letter-spacing: -0.035em;
+    }
+    .c-head h1 em { font-style: italic; color: var(--accent); font-weight: 400; }
+    .c-head .side {
+      max-width: 360px;
+      padding-bottom: 20px;
+      color: var(--ink-2);
+      line-height: 1.55;
+      font-size: 14px;
+    }
+
+    .c-wrap {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 0;
+      min-height: 720px;
+    }
+
+    /* ================ LEFT: FORM ================ */
+    .c-form {
+      padding: 60px 40px 80px;
+      border-right: 1px solid var(--line);
+    }
+    .step-bar {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 40px;
+    }
+    .step {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .step .dot {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      border: 1px solid var(--line);
+      display: grid; place-items: center;
+      font-size: 10px;
+      background: transparent;
+    }
+    .step.active { color: var(--ink); }
+    .step.active .dot {
+      background: var(--accent);
+      color: var(--white);
+      border-color: var(--accent);
+    }
+    .step.done .dot {
+      background: var(--ink);
+      color: var(--white);
+      border-color: var(--ink);
+    }
+    .step-bar .sep {
+      flex: 1;
+      height: 1px;
+      background: var(--line);
+      max-width: 40px;
+    }
+
+    .step-content {
+      display: none;
+      animation: fadeIn .3s ease;
+    }
+    .step-content.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px);} to { opacity: 1; transform: translateY(0);} }
+
+    .step-title {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: 40px;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      margin-bottom: 10px;
+    }
+    .step-title em { font-style: italic; color: var(--accent); font-weight: 400; }
+    .step-sub {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 36px;
+    }
+
+    .opt-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+    .opt-card {
+      padding: 24px 20px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      cursor: pointer;
+      text-align: left;
+      background: transparent;
+      transition: all .2s;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      min-height: 110px;
+    }
+    .opt-card:hover { border-color: var(--ink); }
+    .opt-card.active {
+      border-color: var(--accent);
+      background: rgba(232, 116, 58, 0.06);
+    }
+    .opt-card .ttl {
+      font-family: var(--serif);
+      font-weight: 400;
+      font-size: 20px;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+    }
+    .opt-card .dsc {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .fields-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px 20px;
+      margin-bottom: 28px;
+    }
+    .fields-grid .field.full { grid-column: 1 / -1; }
+
+    .step-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 20px;
+      padding-top: 24px;
+      border-top: 1px solid var(--line);
+    }
+    .btn-link {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      background: transparent;
+      padding: 8px 0;
+      cursor: pointer;
+      transition: color .2s;
+    }
+    .btn-link:hover { color: var(--ink); }
+
+    .summary-box {
+      padding: 24px;
+      background: var(--bg);
+      border: 1px dashed var(--line);
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    .summary-box .row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px dashed var(--line);
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    .summary-box .row:last-child { border-bottom: none; }
+    .summary-box .row .k { color: var(--muted); }
+    .summary-box .row .v { color: var(--ink); font-weight: 500; text-align: right; }
+
+    .success {
+      text-align: center;
+      padding: 40px 20px;
+    }
+    .success .check {
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: var(--white);
+      display: grid; place-items: center;
+      margin: 0 auto 24px;
+      font-size: 40px;
+      line-height: 1;
+    }
+    .success h3 {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: 48px;
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+    }
+    .success h3 em { color: var(--accent); font-style: italic; font-weight: 400; }
+    .success p {
+      color: var(--muted);
+      line-height: 1.6;
+      max-width: 420px;
+      margin: 0 auto 28px;
+      font-size: 14px;
+    }
+    .success .meta {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-2);
+      padding: 20px;
+      background: var(--bg);
+      border-radius: 8px;
+      display: inline-block;
+    }
+
+    /* ================ RIGHT: INFO PANEL ================ */
+    .c-info {
+      position: relative;
+      padding: 60px 40px;
+      background-size: cover;
+      background-position: center;
+      background-image: url('https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80');
+      color: var(--white);
+    }
+    .c-info::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(180deg, rgba(20,18,16,0.7) 0%, rgba(20,18,16,0.85) 100%);
+    }
+    .c-info > * { position: relative; z-index: 2; }
+
+    .c-info h2 {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(40px, 4.5vw, 56px);
+      line-height: 1.0;
+      letter-spacing: -0.02em;
+      margin-bottom: 24px;
+    }
+    .c-info h2 em { font-style: italic; color: var(--accent); font-weight: 400; }
+
+    .c-info p.lead {
+      color: rgba(250,247,241,0.8);
+      line-height: 1.6;
+      margin-bottom: 40px;
+      font-size: 14px;
+      max-width: 380px;
+    }
+
+    .info-block {
+      padding: 24px 0;
+      border-top: 1px solid rgba(255,255,255,0.15);
+    }
+    .info-block .k {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(250,247,241,0.5);
+      margin-bottom: 8px;
+    }
+    .info-block .v {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: 24px;
+      letter-spacing: -0.01em;
+    }
+    .info-block .v a { color: var(--white); border-bottom: 1px solid transparent; transition: border-color .2s; }
+    .info-block .v a:hover { border-color: var(--accent); color: var(--accent); }
+    .info-block .sub {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      color: rgba(250,247,241,0.55);
+      margin-top: 4px;
+      text-transform: uppercase;
+    }
+
+    .curator {
+      margin-top: 40px;
+      padding-top: 32px;
+      border-top: 1px solid rgba(255,255,255,0.15);
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+    .curator .avatar {
+      width: 64px; height: 64px;
+      border-radius: 50%;
+      background-size: cover;
+      background-position: center;
+      background-image: url('https://images.unsplash.com/photo-1557862921-37829c790f19?auto=format&fit=crop&w=200&q=80');
+      border: 2px solid var(--accent);
+    }
+    .curator .meta .name {
+      font-family: var(--serif);
+      font-size: 18px;
+      margin-bottom: 2px;
+    }
+    .curator .meta .role {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(250,247,241,0.6);
+    }
+
+    @media (max-width: 900px) {
+      .c-head { padding: 90px 20px 24px; }
+      .c-head .top { flex-direction: column; align-items: flex-start; gap: 20px; }
+      .c-head h1 { font-size: clamp(52px, 13vw, 84px); }
+      .c-wrap { grid-template-columns: 1fr; min-height: auto; }
+      .c-form { padding: 40px 20px 48px; border-right: none; border-bottom: 1px solid var(--line); }
+      .c-info { padding: 40px 20px; }
+      .c-info h2 { font-size: clamp(32px, 8vw, 44px); }
+      .fields-grid, .opt-grid { grid-template-columns: 1fr; }
+      .step-bar { flex-wrap: wrap; gap: 8px; margin-bottom: 28px; }
+      .step { font-size: 9px; }
+      .step-bar .sep { max-width: 20px; }
+      .step-title { font-size: 30px; }
+      .opt-card { padding: 18px 16px; min-height: 90px; }
+      .opt-card .ttl { font-size: 17px; }
+      .success h3 { font-size: 36px; }
+      .step-actions { flex-direction: column-reverse; gap: 12px; align-items: stretch; }
+      .step-actions .btn { justify-content: center; }
+    }
+
+    @media (max-width: 640px) {
+      .c-head { padding: 76px 16px 20px; }
+      .c-form { padding: 32px 16px 40px; }
+      .c-info { padding: 32px 16px; }
+      .curator { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body data-page="contact">
+<div data-chrome="top"></div>
+<main class="shell">
+  <div data-chrome="nav"></div>
+
+  <section class="c-head">
+    <div class="top">
+      <h1>Заявка — <em>приватно</em>.</h1>
+      <div class="side">
+        Три коротких шага. Куратор свяжется в течение рабочего дня, NDA подписывается до обсуждения деталей. Никаких менеджеров и колл-центров.
+      </div>
+    </div>
+  </section>
+
+  <div class="c-wrap">
+    <!-- ======== FORM ======== -->
+    <div class="c-form">
+      <div class="step-bar" id="stepBar">
+        <div class="step active" data-step="1"><span class="dot">1</span><span>Интерес</span></div>
+        <div class="sep"></div>
+        <div class="step" data-step="2"><span class="dot">2</span><span>Контакты</span></div>
+        <div class="sep"></div>
+        <div class="step" data-step="3"><span class="dot">3</span><span>Подтверждение</span></div>
+      </div>
+
+      <!-- STEP 1 -->
+      <div class="step-content active" data-step="1">
+        <div class="step-title">Что вам <em>интересно</em>?</div>
+        <div class="step-sub">— Можно отметить несколько вариантов</div>
+
+        <div class="opt-grid" data-multi="true" id="interestGrid">
+          <button class="opt-card" data-v="residence">
+            <span class="ttl">Резиденция под ключ</span>
+            <span class="dsc">— Проект + стройка, 12–18 мес</span>
+          </button>
+          <button class="opt-card" data-v="ready">
+            <span class="ttl">Готовый дом</span>
+            <span class="dsc">— Из текущего портфеля</span>
+          </button>
+          <button class="opt-card" data-v="plot">
+            <span class="ttl">Подбор участка</span>
+            <span class="dsc">— Закрытые локации</span>
+          </button>
+          <button class="opt-card" data-v="renovation">
+            <span class="ttl">Реконструкция</span>
+            <span class="dsc">— Аудит и обновление</span>
+          </button>
+        </div>
+
+        <div class="step-title" style="font-size: 28px; margin-top: 28px;">Ориентировочный <em>бюджет</em></div>
+        <div class="opt-grid" id="budgetGrid" style="margin-top: 20px;">
+          <button class="opt-card" data-v="180-300">
+            <span class="ttl">₽ 180 – 300 млн</span>
+            <span class="dsc">— Базовая резиденция</span>
+          </button>
+          <button class="opt-card" data-v="300-500">
+            <span class="ttl">₽ 300 – 500 млн</span>
+            <span class="dsc">— Авторский проект</span>
+          </button>
+          <button class="opt-card" data-v="500+">
+            <span class="ttl">₽ 500 млн +</span>
+            <span class="dsc">— Heritage уровень</span>
+          </button>
+          <button class="opt-card" data-v="eu">
+            <span class="ttl">€ / CHF Европа</span>
+            <span class="dsc">— Побережье · Альпы</span>
+          </button>
+        </div>
+
+        <div class="step-actions">
+          <span></span>
+          <button class="btn btn-primary" onclick="nextStep()">Далее <span class="plus">→</span></button>
+        </div>
+      </div>
+
+      <!-- STEP 2 -->
+      <div class="step-content" data-step="2">
+        <div class="step-title">Как с вами <em>связаться</em>?</div>
+        <div class="step-sub">— Все поля защищены, данные не передаются третьим лицам</div>
+
+        <div class="fields-grid">
+          <div class="field">
+            <label>Имя</label>
+            <input type="text" id="fName" placeholder="Александр" />
+          </div>
+          <div class="field">
+            <label>Фамилия</label>
+            <input type="text" id="fLast" placeholder="Соколов" />
+          </div>
+          <div class="field">
+            <label>Телефон / Telegram</label>
+            <input type="text" id="fPhone" placeholder="+7 ___ ___ __ __" />
+          </div>
+          <div class="field">
+            <label>Почта</label>
+            <input type="email" id="fEmail" placeholder="a.sokolov@mail.ru" />
+          </div>
+          <div class="field full">
+            <label>Предпочтительный способ связи</label>
+            <select id="fChannel">
+              <option>Звонок в рабочее время</option>
+              <option>Telegram</option>
+              <option>Почта</option>
+              <option>Личная встреча в офисе</option>
+            </select>
+          </div>
+          <div class="field full">
+            <label>Дополнительно (необязательно)</label>
+            <textarea id="fNote" placeholder="Расскажите о локации, размере семьи, ключевых пожеланиях к дому..."></textarea>
+          </div>
+        </div>
+
+        <div class="step-actions">
+          <button class="btn-link" onclick="prevStep()">← Назад</button>
+          <button class="btn btn-primary" onclick="nextStep()">Далее <span class="plus">→</span></button>
+        </div>
+      </div>
+
+      <!-- STEP 3 -->
+      <div class="step-content" data-step="3">
+        <div class="step-title">Проверьте <em>данные</em></div>
+        <div class="step-sub">— Перед отправкой</div>
+
+        <div class="summary-box" id="summary"></div>
+
+        <div style="font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); line-height: 1.7; margin-bottom: 24px;">
+          — Отправляя заявку, вы соглашаетесь с политикой конфиденциальности и подтверждаете, что все данные будут обработаны только сотрудниками Focuse.
+        </div>
+
+        <div class="step-actions">
+          <button class="btn-link" onclick="prevStep()">← Изменить</button>
+          <button class="btn btn-accent" onclick="submitForm()">Отправить заявку <span>→</span></button>
+        </div>
+      </div>
+
+      <!-- SUCCESS -->
+      <div class="step-content" data-step="4">
+        <div class="success">
+          <div class="check">✓</div>
+          <h3>Заявка <em>отправлена</em></h3>
+          <p>Ваш куратор Екатерина свяжется с вами в течение рабочего дня. Мы подготовим персональную подборку проектов на основе ваших пожеланий.</p>
+          <div class="meta">Номер заявки: <strong id="ticketNum">FCS-2026-0874</strong></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======== INFO ======== -->
+    <div class="c-info">
+      <div class="mono" style="color: rgba(250,247,241,0.5); margin-bottom: 20px;">— Прямой контакт</div>
+      <h2>Без отдела <em>продаж</em>. <br/>Только куратор.</h2>
+      <p class="lead">Каждый проект ведёт один архитектор-куратор с первой встречи до сдачи ключей. Он же — ваш единственный контакт в компании.</p>
+
+      <div class="info-block">
+        <div class="k">Москва · Главный офис</div>
+        <div class="v">Пречистенка 38, ст. 1</div>
+        <div class="sub">Приём по записи · Пн-Пт 10:00–19:00</div>
+      </div>
+      <div class="info-block">
+        <div class="k">Дубай · Представительство</div>
+        <div class="v">DIFC Gate Village 7</div>
+        <div class="sub">Приём по записи · Пн-Сб 10:00–20:00</div>
+      </div>
+      <div class="info-block">
+        <div class="k">Прямой телефон</div>
+        <div class="v"><a href="tel:+74952770010">+7 495 277 00 10</a></div>
+      </div>
+      <div class="info-block">
+        <div class="k">Почта</div>
+        <div class="v"><a href="mailto:hello@focuse.estate">hello@focuse.estate</a></div>
+      </div>
+
+      <div class="curator">
+        <div class="avatar"></div>
+        <div class="meta">
+          <div class="name">Екатерина Вершинина</div>
+          <div class="role">— Главный куратор · 9 лет в Focuse</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div data-chrome="bottom"></div>
+</main>
+
+<script src="scripts/chrome.js"></script>
+<script>
+let current = 1;
+const state = {
+  interests: new Set(),
+  budget: null,
+};
+
+function setActive(sel, pred) {
+  document.querySelectorAll(sel).forEach(el => el.classList.toggle('active', pred(el)));
+}
+function setStep(n) {
+  current = n;
+  document.querySelectorAll('.step-content').forEach(c => c.classList.toggle('active', +c.dataset.step === n));
+  document.querySelectorAll('#stepBar .step').forEach(s => {
+    const sn = +s.dataset.step;
+    s.classList.toggle('active', sn === n);
+    s.classList.toggle('done', sn < n);
+  });
+  if (n === 3) renderSummary();
+}
+function nextStep() { if (current < 3) setStep(current + 1); }
+function prevStep() { if (current > 1) setStep(current - 1); }
+
+// multi-select interest
+document.getElementById('interestGrid').addEventListener('click', (e) => {
+  const btn = e.target.closest('.opt-card');
+  if (!btn) return;
+  btn.classList.toggle('active');
+  if (state.interests.has(btn.dataset.v)) state.interests.delete(btn.dataset.v);
+  else state.interests.add(btn.dataset.v);
+});
+// single budget
+document.getElementById('budgetGrid').addEventListener('click', (e) => {
+  const btn = e.target.closest('.opt-card');
+  if (!btn) return;
+  document.querySelectorAll('#budgetGrid .opt-card').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  state.budget = btn.dataset.v;
+});
+
+function renderSummary() {
+  const interestMap = { residence: 'Резиденция под ключ', ready: 'Готовый дом', plot: 'Подбор участка', renovation: 'Реконструкция' };
+  const budgetMap = { '180-300': '₽ 180–300 млн', '300-500': '₽ 300–500 млн', '500+': '₽ 500 млн +', 'eu': '€ / CHF Европа' };
+  const rows = [
+    ['Интерес', [...state.interests].map(i => interestMap[i]).join(' · ') || '—'],
+    ['Бюджет', budgetMap[state.budget] || '—'],
+    ['Имя', (document.getElementById('fName').value + ' ' + document.getElementById('fLast').value).trim() || '—'],
+    ['Телефон', document.getElementById('fPhone').value || '—'],
+    ['Почта', document.getElementById('fEmail').value || '—'],
+    ['Связь', document.getElementById('fChannel').value],
+  ];
+  document.getElementById('summary').innerHTML = rows.map(r => `
+    <div class="row"><span class="k">${r[0]}</span><span class="v">${r[1]}</span></div>
+  `).join('');
+}
+
+// =========================================================================
+// КУДА ОТПРАВЛЯТЬ ЗАЯВКИ (заполните хотя бы одно поле ниже)
+// =========================================================================
+// 1) На почту через Formspree (https://formspree.io):
+//    — зарегистрируйтесь, создайте форму, скопируйте endpoint вида
+//      https://formspree.io/f/xxxxxxxx и вставьте сюда
+const FORMSPREE_URL = ''; // например: 'https://formspree.io/f/xyzabcde'
+//
+// 2) В Telegram через бота:
+//    — создайте бота у @BotFather, получите TOKEN
+//    — напишите боту /start, затем откройте
+//      https://api.telegram.org/bot<TOKEN>/getUpdates — там будет chat.id
+const TELEGRAM_TOKEN   = '8739232889:AAFIIoLvWki5BM1aq-E5QKjvOD1SFL7k-9A';
+const TELEGRAM_CHAT_ID = '924508634';
+// =========================================================================
+
+function validateStep2() {
+  const name = document.getElementById('fName').value.trim();
+  const phone = document.getElementById('fPhone').value.trim();
+  const email = document.getElementById('fEmail').value.trim();
+  if (!name) return 'Укажите имя';
+  if (!phone && !email) return 'Нужен телефон или почта';
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return 'Проверьте адрес почты';
+  return null;
+}
+
+// переопределяем nextStep: перед переходом со 2-го шага проверяем поля
+const _nextStep = nextStep;
+window.nextStep = function () {
+  if (current === 2) {
+    const err = validateStep2();
+    if (err) { alert(err); return; }
+  }
+  _nextStep();
+};
+
+function buildPayload() {
+  const interestMap = { residence: 'Резиденция под ключ', ready: 'Готовый дом', plot: 'Подбор участка', renovation: 'Реконструкция' };
+  const budgetMap = { '180-300': '₽ 180–300 млн', '300-500': '₽ 300–500 млн', '500+': '₽ 500 млн +', 'eu': '€ / CHF Европа' };
+  return {
+    ticket: 'FCS-2026-' + String(Math.floor(Math.random() * 9000) + 1000),
+    interest: [...state.interests].map(i => interestMap[i]).join(', ') || '—',
+    budget: budgetMap[state.budget] || '—',
+    name: document.getElementById('fName').value.trim(),
+    lastName: document.getElementById('fLast').value.trim(),
+    phone: document.getElementById('fPhone').value.trim(),
+    email: document.getElementById('fEmail').value.trim(),
+    channel: document.getElementById('fChannel').value,
+    note: document.getElementById('fNote').value.trim(),
+    source: 'focuse.estate',
+    when: new Date().toLocaleString('ru-RU'),
+  };
+}
+
+async function sendToFormspree(p) {
+  if (!FORMSPREE_URL) return { skipped: true };
+  const res = await fetch(FORMSPREE_URL, {
+    method: 'POST',
+    headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+    body: JSON.stringify(p),
+  });
+  if (!res.ok) throw new Error('Formspree ' + res.status);
+  return { ok: true };
+}
+
+async function sendToTelegram(p) {
+  if (!TELEGRAM_TOKEN || !TELEGRAM_CHAT_ID) return { skipped: true };
+  const text =
+    `🏛 Новая заявка ${p.ticket}\n\n` +
+    `👤 ${p.name} ${p.lastName}\n` +
+    `📞 ${p.phone || '—'}\n` +
+    `✉️ ${p.email || '—'}\n` +
+    `💬 Связь: ${p.channel}\n\n` +
+    `🎯 Интерес: ${p.interest}\n` +
+    `💰 Бюджет: ${p.budget}\n\n` +
+    (p.note ? `📝 ${p.note}\n\n` : '') +
+    `⏱ ${p.when}`;
+  const url = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text }),
+  });
+  if (!res.ok) throw new Error('Telegram ' + res.status);
+  return { ok: true };
+}
+
+async function submitForm() {
+  const btn = document.querySelector('.btn-accent[onclick="submitForm()"]');
+  if (btn && btn.disabled) return;
+  if (btn) { btn.disabled = true; btn.dataset.old = btn.innerHTML; btn.innerHTML = 'Отправляем…'; btn.style.opacity = '.6'; }
+
+  const payload = buildPayload();
+  const results = await Promise.allSettled([sendToFormspree(payload), sendToTelegram(payload)]);
+  const sent = results.some(r => r.status === 'fulfilled' && r.value.ok);
+  const errored = results.some(r => r.status === 'rejected');
+
+  if (!FORMSPREE_URL && !TELEGRAM_TOKEN) {
+    console.warn('[Focuse] Отправка не настроена. Данные заявки:', payload);
+  } else if (errored && !sent) {
+    if (btn) { btn.disabled = false; btn.innerHTML = btn.dataset.old; btn.style.opacity = '1'; }
+    alert('Не удалось отправить заявку. Позвоните нам: +7 495 277 00 10');
+    return;
+  }
+
+  document.getElementById('ticketNum').textContent = payload.ticket;
+  setStep(4);
+  document.querySelectorAll('#stepBar .step').forEach(s => s.classList.add('done'));
+  document.getElementById('stepBar').style.display = 'none';
+}
+</script>
+</body>
+</html>

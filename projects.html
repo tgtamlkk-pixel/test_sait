@@ -1,0 +1,713 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Проекты — Focuse</title>
+  <link rel="stylesheet" href="styles/base.css" />
+  <style>
+    .projects-head {
+      padding: 130px 40px 40px;
+      position: relative;
+    }
+    .projects-head .top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 40px;
+      margin-bottom: 48px;
+    }
+    .projects-head h1 {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(72px, 11vw, 160px);
+      line-height: 0.9;
+      letter-spacing: -0.035em;
+    }
+    .projects-head h1 em { font-style: italic; color: var(--accent); font-weight: 400; }
+    .projects-head .summary {
+      max-width: 340px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .filters {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding: 0 40px 20px;
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 40px;
+    }
+    .filter-chip {
+      padding: 8px 16px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      transition: all .2s;
+      cursor: pointer;
+      background: transparent;
+      color: var(--ink-2);
+    }
+    .filter-chip:hover { border-color: var(--ink); }
+    .filter-chip.active {
+      background: var(--ink);
+      color: var(--bg);
+      border-color: var(--ink);
+    }
+
+    /* ============ MAIN SPLIT ============ */
+    .project-view {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 20px;
+      padding: 0 40px 40px;
+    }
+
+    .project-list {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .project-card {
+      display: grid;
+      grid-template-columns: 80px 1fr auto;
+      gap: 14px;
+      padding: 18px;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      align-items: center;
+      cursor: pointer;
+      transition: all .2s;
+      text-align: left;
+    }
+    .project-card:hover { background: var(--bg-3); }
+    .project-card.active {
+      background: var(--white);
+      border-color: var(--line);
+    }
+    .project-card .thumb {
+      width: 80px; height: 80px;
+      border-radius: 6px;
+      background-size: cover;
+      background-position: center;
+    }
+    .project-card .info .name {
+      font-family: var(--serif);
+      font-weight: 400;
+      font-size: 17px;
+      line-height: 1.1;
+      letter-spacing: -0.01em;
+      margin-bottom: 4px;
+    }
+    .project-card .info .loc {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .project-card .price {
+      font-family: var(--serif);
+      font-size: 18px;
+      color: var(--ink);
+    }
+    .project-card.active .price { color: var(--accent); }
+
+    /* ============ DETAIL ============ */
+    .project-detail {
+      position: relative;
+      border-radius: 10px;
+      overflow: hidden;
+      min-height: 720px;
+      background: var(--ink);
+    }
+    .project-hero {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      transition: opacity .5s ease;
+    }
+    .project-hero::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(180deg, rgba(20,18,16,0) 30%, rgba(20,18,16,0.75) 100%);
+    }
+
+    .project-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 32px;
+      color: var(--white);
+    }
+    .project-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    .project-top .tag {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 6px 12px;
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 999px;
+      color: var(--white);
+    }
+    .project-top .counter {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      color: rgba(255,255,255,0.6);
+    }
+    .project-top .counter .cur { color: var(--white); }
+
+    .project-bottom {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 40px;
+      align-items: end;
+    }
+    .project-bottom h2 {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(44px, 5vw, 72px);
+      line-height: 0.95;
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+    }
+    .project-bottom h2 em { font-style: italic; color: var(--accent); font-weight: 400; }
+    .project-bottom .desc {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      line-height: 1.7;
+      color: rgba(255,255,255,0.75);
+      max-width: 480px;
+    }
+
+    .stats-overlay {
+      background: rgba(20, 18, 16, 0.45);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      padding: 20px;
+    }
+    .stats-overlay .row {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px dashed rgba(255,255,255,0.15);
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    .stats-overlay .row:last-child { border-bottom: none; }
+    .stats-overlay .row .k { color: rgba(255,255,255,0.55); }
+    .stats-overlay .row .v { color: var(--white); font-weight: 500; }
+    .stats-overlay .cta {
+      margin-top: 16px;
+      width: 100%;
+      justify-content: center;
+    }
+
+    /* ============ CALCULATOR ============ */
+    .calc {
+      padding: 100px 40px 100px;
+    }
+    .calc-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 60px;
+      align-items: start;
+    }
+    .calc-left h2 {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(48px, 6vw, 80px);
+      line-height: 0.95;
+      letter-spacing: -0.02em;
+      margin-bottom: 24px;
+    }
+    .calc-left h2 em { font-style: italic; color: var(--accent); font-weight: 400; }
+    .calc-left p {
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 14px;
+      max-width: 440px;
+      margin-bottom: 32px;
+    }
+    .calc-bullets {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .calc-bullet {
+      display: grid;
+      grid-template-columns: 40px 1fr;
+      gap: 12px;
+      padding: 16px 0;
+      border-top: 1px solid var(--line);
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink-2);
+    }
+    .calc-bullet .n { color: var(--accent); }
+
+    .calc-panel {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 32px;
+    }
+    .calc-panel h3 {
+      font-family: var(--serif);
+      font-weight: 400;
+      font-size: 22px;
+      margin-bottom: 4px;
+    }
+    .calc-panel .sub {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 28px;
+    }
+
+    .slider-row {
+      margin-bottom: 24px;
+    }
+    .slider-row .label-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 10px;
+    }
+    .slider-row .lbl {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .slider-row .val {
+      font-family: var(--serif);
+      font-size: 22px;
+      color: var(--ink);
+    }
+    .slider-row .val em { color: var(--accent); font-style: italic; }
+    input[type=range] {
+      width: 100%;
+      -webkit-appearance: none;
+      appearance: none;
+      height: 2px;
+      background: var(--line);
+      outline: none;
+      border-radius: 1px;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: var(--accent);
+      cursor: pointer;
+      border: 3px solid var(--white);
+      box-shadow: 0 0 0 1px var(--accent);
+    }
+    input[type=range]::-moz-range-thumb {
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: var(--accent);
+      cursor: pointer;
+      border: 3px solid var(--white);
+      box-shadow: 0 0 0 1px var(--accent);
+    }
+
+    .calc-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin: 24px 0 8px;
+    }
+    .calc-option {
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      text-align: center;
+      transition: all .2s;
+      background: transparent;
+      color: var(--ink-2);
+    }
+    .calc-option:hover { border-color: var(--ink); }
+    .calc-option.active {
+      border-color: var(--accent);
+      background: var(--accent);
+      color: var(--white);
+    }
+
+    .calc-result {
+      margin-top: 28px;
+      padding-top: 28px;
+      border-top: 1px solid var(--line);
+    }
+    .calc-result .pricing {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 12px;
+    }
+    .calc-result .pricing .key {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .calc-result .pricing .big {
+      font-family: var(--serif);
+      font-size: 42px;
+      font-weight: 300;
+      color: var(--ink);
+      letter-spacing: -0.02em;
+    }
+    .calc-result .pricing .big em { color: var(--accent); font-style: italic; }
+    .calc-result .pricing.sub {
+      margin-bottom: 0;
+    }
+    .calc-result .pricing.sub .big { font-size: 18px; font-weight: 400; }
+    .calc-result .cta-row {
+      margin-top: 24px;
+      display: flex;
+      gap: 10px;
+    }
+
+    @media (max-width: 900px) {
+      .projects-head { padding: 90px 20px 20px; }
+      .projects-head .top-row { flex-direction: column; align-items: flex-start; }
+      .projects-head h1 { font-size: clamp(52px, 12vw, 80px); }
+      .filters { padding: 0 20px 16px; gap: 6px; }
+      .filter-chip { padding: 6px 12px; font-size: 9px; }
+      .project-view { grid-template-columns: 1fr; padding: 0 20px 32px; }
+      .project-detail { min-height: 520px; order: -1; }
+      .project-list { max-height: none; }
+      .project-card { grid-template-columns: 60px 1fr auto; padding: 12px; }
+      .project-card .thumb { width: 60px; height: 60px; }
+      .project-card .info .name { font-size: 15px; }
+      .project-card .price { font-size: 14px; }
+      .project-bottom { grid-template-columns: 1fr; gap: 20px; }
+      .project-bottom h2 { font-size: clamp(32px, 8vw, 48px); }
+      .project-overlay { padding: 20px; }
+      .stats-overlay { padding: 16px; }
+      .calc { padding: 48px 20px; }
+      .calc-grid { grid-template-columns: 1fr; gap: 32px; }
+      .calc-left h2 { font-size: clamp(36px, 9vw, 52px); }
+      .calc-panel { padding: 24px 20px; }
+      .calc-options { grid-template-columns: 1fr 1fr; }
+      .calc-result .pricing .big { font-size: 32px; }
+    }
+
+    @media (max-width: 640px) {
+      .projects-head { padding: 76px 16px 16px; }
+      .project-view { padding: 0 16px 24px; }
+      .calc { padding: 40px 16px; }
+      .project-top .tag { font-size: 9px; padding: 5px 10px; }
+    }
+  </style>
+</head>
+<body data-page="projects">
+<div data-chrome="top"></div>
+
+<main class="shell">
+  <div data-chrome="nav"></div>
+
+  <section class="projects-head">
+    <div class="top-row">
+      <h1>Проекты & <em>коллекции</em></h1>
+      <div class="summary">
+        34 резиденции в трёх закрытых коллекциях. Выберите проект слева — откроется детальный разрез: планировки, материалы, инженерия, сроки.
+      </div>
+    </div>
+  </section>
+
+  <div class="filters" id="filters">
+    <button class="filter-chip active" data-f="all">Все · 12</button>
+    <button class="filter-chip" data-f="forest">Лес · 5</button>
+    <button class="filter-chip" data-f="coast">Побережье · 4</button>
+    <button class="filter-chip" data-f="mountain">Горы · 3</button>
+    <button class="filter-chip" data-f="ready">Готов к заселению</button>
+    <button class="filter-chip" data-f="soon">Скоро в продаже</button>
+  </div>
+
+  <div class="project-view">
+    <div class="project-list" id="projectList"></div>
+    <div class="project-detail" id="projectDetail">
+      <div class="project-hero" id="projectHero"></div>
+      <div class="project-overlay">
+        <div class="project-top">
+          <div class="tag" id="projectTag">Коллекция Silent Coast</div>
+          <div class="counter"><span class="cur" id="projectCur">01</span> / <span id="projectTot">12</span></div>
+        </div>
+        <div class="project-bottom">
+          <div>
+            <h2 id="projectName">Villa Méridienne</h2>
+            <div class="desc" id="projectDesc">Резиденция 840 м² · известняк, дуб, панорамное остекление · участок 0,8 га в закрытом посёлке на Новорижском шоссе</div>
+          </div>
+          <div class="stats-overlay">
+            <div class="row"><span class="k">Площадь дома</span><span class="v" id="statArea">840 м²</span></div>
+            <div class="row"><span class="k">Участок</span><span class="v" id="statPlot">0,8 га</span></div>
+            <div class="row"><span class="k">Спальни</span><span class="v" id="statBeds">5</span></div>
+            <div class="row"><span class="k">Сдача</span><span class="v" id="statReady">Q4 2026</span></div>
+            <div class="row"><span class="k">От</span><span class="v" id="statPrice" style="color: var(--accent);">₽ 420 млн</span></div>
+            <button class="btn btn-accent cta" onclick="location.href='contact.html'">
+              Запросить презентацию <span>→</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================== CALCULATOR ====================== -->
+  <section class="calc">
+    <div class="section-head">
+      <h2>Калькулятор <em>сметы</em></h2>
+      <div class="side">
+        Ориентировочный расчёт бюджета резиденции с учётом площади, класса материалов и инженерии. Итоговая цифра фиксируется в договоре.
+      </div>
+    </div>
+
+    <div class="calc-grid">
+      <div class="calc-left">
+        <h2>Смета, <em>зафиксированная</em> в договоре.</h2>
+        <p>В отличие от большинства игроков рынка, мы фиксируем итоговую смету в рублях на старте и не пересматриваем её по ходу стройки. Никаких «непредвиденных расходов», ни копейки сверху.</p>
+        <div class="calc-bullets">
+          <div class="calc-bullet">
+            <span class="n">→ 01</span>
+            <span>Двигайте ползунки — итог пересчитывается в реальном времени</span>
+          </div>
+          <div class="calc-bullet">
+            <span class="n">→ 02</span>
+            <span>Подбирайте класс отделки и уровень инженерии</span>
+          </div>
+          <div class="calc-bullet">
+            <span class="n">→ 03</span>
+            <span>Оставляйте заявку — итоговая смета готова за 7 дней</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="calc-panel">
+        <h3>Предварительный расчёт</h3>
+        <div class="sub">— Ориентировочная стоимость резиденции</div>
+
+        <div class="slider-row">
+          <div class="label-row">
+            <span class="lbl">Площадь дома</span>
+            <span class="val"><em id="valArea">600</em> м²</span>
+          </div>
+          <input type="range" id="area" min="300" max="1500" step="20" value="600">
+        </div>
+
+        <div class="slider-row">
+          <div class="label-row">
+            <span class="lbl">Размер участка</span>
+            <span class="val"><em id="valPlot">0,5</em> га</span>
+          </div>
+          <input type="range" id="plot" min="10" max="30" step="1" value="15">
+        </div>
+
+        <div class="label-row" style="margin-top: 20px; margin-bottom: 8px;">
+          <span class="lbl">Класс отделки</span>
+        </div>
+        <div class="calc-options" data-group="class">
+          <button class="calc-option" data-val="1">Premium</button>
+          <button class="calc-option active" data-val="1.25">De Luxe</button>
+          <button class="calc-option" data-val="1.55">Unique</button>
+          <button class="calc-option" data-val="1.9">Heritage</button>
+        </div>
+
+        <div class="label-row" style="margin-top: 12px; margin-bottom: 8px;">
+          <span class="lbl">Локация</span>
+        </div>
+        <div class="calc-options" data-group="loc">
+          <button class="calc-option active" data-val="1">Подмосковье</button>
+          <button class="calc-option" data-val="1.35">Побережье РФ</button>
+          <button class="calc-option" data-val="1.7">Альпы</button>
+          <button class="calc-option" data-val="1.5">Коста-Брава</button>
+        </div>
+
+        <div class="calc-result">
+          <div class="pricing">
+            <span class="key">Ориентировочно</span>
+            <span class="big">от <em id="totalPrice">₽ 375</em> млн</span>
+          </div>
+          <div class="pricing sub">
+            <span class="key">Срок строительства</span>
+            <span class="big" id="totalMonths">16 месяцев</span>
+          </div>
+          <div class="cta-row">
+            <a href="contact.html" class="btn btn-primary" style="flex:1; justify-content: center;">
+              Получить точную смету <span class="plus">→</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div data-chrome="bottom"></div>
+</main>
+
+<script src="scripts/chrome.js"></script>
+<script>
+// ================== PROJECTS DATA ==================
+const PROJECTS = [
+  { id: 'villa-meridienne', name: 'Villa Méridienne', tag: 'Коллекция Silent Coast', loc: 'Новорижское ш. · 28 км', price: '₽ 420 млн', cat: 'forest', status: 'ready',
+    img: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1600&q=80',
+    thumb: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=300&q=80',
+    desc: 'Резиденция 840 м² · известняк, дуб, панорамное остекление · участок 0,8 га в закрытом посёлке на Новорижском шоссе',
+    stats: { area: '840 м²', plot: '0,8 га', beds: '5', ready: 'Q4 2026', price: '₽ 420 млн' }},
+  { id: 'maison-lumiere', name: 'Maison Lumière', tag: 'Коллекция Maison Lumière', loc: 'Коста-Брава · Испания', price: '€ 5.2 млн', cat: 'coast', status: 'ready',
+    img: 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=1600&q=80',
+    thumb: 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=300&q=80',
+    desc: 'Вилла 620 м² на скале над морем · белый известняк и тик · приватный выход к бухте',
+    stats: { area: '620 м²', plot: '0,4 га', beds: '4', ready: 'Q2 2027', price: '€ 5,2 млн' }},
+  { id: 'alpen-refuge', name: 'Alpen Refuge', tag: 'Коллекция Alpen Refuge', loc: 'Гштад · Швейцария', price: 'CHF 12 млн', cat: 'mountain', status: 'soon',
+    img: 'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=1600&q=80',
+    thumb: 'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=300&q=80',
+    desc: 'Шале 480 м² · местный камень и состаренный дуб · панорама на долину, подъёмник в 300 м',
+    stats: { area: '480 м²', plot: '0,3 га', beds: '6', ready: 'Q1 2028', price: 'CHF 12 млн' }},
+  { id: 'casa-verde', name: 'Casa Verde', tag: 'Коллекция Silent Coast', loc: 'Барвиха · 12 км', price: '₽ 290 млн', cat: 'forest', status: 'ready',
+    img: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1600&q=80',
+    thumb: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=300&q=80',
+    desc: 'Дом 540 м² в сосновом лесу · пастельный бетон и тёмный дуб · собственный бассейн 18 м',
+    stats: { area: '540 м²', plot: '0,5 га', beds: '4', ready: 'Q2 2026', price: '₽ 290 млн' }},
+  { id: 'pine-house', name: 'Pine House', tag: 'Коллекция Silent Coast', loc: 'Истра · 50 км', price: '₽ 186 млн', cat: 'forest', status: 'soon',
+    img: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=1600&q=80',
+    thumb: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=300&q=80',
+    desc: 'Резиденция 410 м² среди корабельных сосен · обугленная лиственница · двор-патио',
+    stats: { area: '410 м²', plot: '0,6 га', beds: '4', ready: 'Q3 2027', price: '₽ 186 млн' }},
+  { id: 'maison-sel', name: 'Maison Sel', tag: 'Коллекция Maison Lumière', loc: 'Антиб · Франция', price: '€ 6.8 млн', cat: 'coast', status: 'soon',
+    img: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1600&q=80',
+    thumb: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=300&q=80',
+    desc: 'Вилла 720 м² с приватным причалом · травертин · оливковая роща на участке',
+    stats: { area: '720 м²', plot: '0,7 га', beds: '5', ready: 'Q4 2027', price: '€ 6,8 млн' }},
+];
+
+let activeId = PROJECTS[0].id;
+let activeFilter = 'all';
+
+function renderList() {
+  const list = document.getElementById('projectList');
+  const filtered = PROJECTS.filter(p =>
+    activeFilter === 'all' ? true :
+    activeFilter === 'ready' || activeFilter === 'soon' ? p.status === activeFilter :
+    p.cat === activeFilter
+  );
+  list.innerHTML = filtered.map((p, i) => `
+    <button class="project-card ${p.id === activeId ? 'active' : ''}" data-id="${p.id}">
+      <div class="thumb" style="background-image: url('${p.thumb}')"></div>
+      <div class="info">
+        <div class="name">${p.name}</div>
+        <div class="loc">${p.loc}</div>
+      </div>
+      <div class="price">${p.price}</div>
+    </button>
+  `).join('');
+  list.querySelectorAll('.project-card').forEach(c => {
+    c.addEventListener('click', () => { activeId = c.dataset.id; renderList(); renderDetail(); });
+  });
+  document.getElementById('projectTot').textContent = String(filtered.length).padStart(2, '0');
+}
+
+function renderDetail() {
+  const p = PROJECTS.find(x => x.id === activeId);
+  if (!p) return;
+  const heroEl = document.getElementById('projectHero');
+  heroEl.style.opacity = '0';
+  setTimeout(() => {
+    heroEl.style.backgroundImage = `url('${p.img}')`;
+    heroEl.style.opacity = '1';
+  }, 200);
+  document.getElementById('projectTag').textContent = p.tag;
+  document.getElementById('projectName').textContent = p.name;
+  document.getElementById('projectDesc').textContent = p.desc;
+  document.getElementById('statArea').textContent = p.stats.area;
+  document.getElementById('statPlot').textContent = p.stats.plot;
+  document.getElementById('statBeds').textContent = p.stats.beds;
+  document.getElementById('statReady').textContent = p.stats.ready;
+  document.getElementById('statPrice').textContent = p.stats.price;
+  const idx = PROJECTS.findIndex(x => x.id === activeId);
+  document.getElementById('projectCur').textContent = String(idx + 1).padStart(2, '0');
+}
+
+// filters
+document.querySelectorAll('.filter-chip').forEach(ch => {
+  ch.addEventListener('click', () => {
+    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    ch.classList.add('active');
+    activeFilter = ch.dataset.f;
+    renderList();
+  });
+});
+
+renderList();
+renderDetail();
+
+// ================== CALCULATOR ==================
+const calc = () => {
+  const area = +document.getElementById('area').value;
+  const plotRaw = +document.getElementById('plot').value;
+  const cls = +document.querySelector('[data-group="class"] .active').dataset.val;
+  const loc = +document.querySelector('[data-group="loc"] .active').dataset.val;
+
+  document.getElementById('valArea').textContent = area;
+  document.getElementById('valPlot').textContent = (plotRaw / 10).toFixed(1).replace('.', ',');
+
+  // base: 0.55 млн ₽ / м²
+  const base = area * 0.55;
+  const price = base * cls * loc;
+  const display = price < 1000 ? `₽ ${Math.round(price)}` : `₽ ${(price/1000).toFixed(1).replace('.', ',')} млрд`;
+  document.getElementById('totalPrice').textContent = display;
+
+  const months = Math.max(12, Math.round(10 + area/60 + (cls-1)*6));
+  document.getElementById('totalMonths').textContent = months + ' месяцев';
+};
+
+document.getElementById('area').addEventListener('input', calc);
+document.getElementById('plot').addEventListener('input', calc);
+document.querySelectorAll('.calc-options').forEach(g => {
+  g.addEventListener('click', e => {
+    const btn = e.target.closest('.calc-option');
+    if (!btn) return;
+    g.querySelectorAll('.calc-option').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    calc();
+  });
+});
+calc();
+</script>
+</body>
+</html>

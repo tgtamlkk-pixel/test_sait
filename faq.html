@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Вопросы и ответы — Focuse</title>
+  <link rel="stylesheet" href="styles/base.css" />
+  <style>
+    .faq-head {
+      padding: 130px 40px 60px;
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 60px;
+      align-items: end;
+      border-bottom: 1px solid var(--line);
+    }
+    .faq-head h1 {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(72px, 11vw, 180px);
+      line-height: 0.88;
+      letter-spacing: -0.035em;
+    }
+    .faq-head h1 em { font-style: italic; color: var(--accent); font-weight: 400; }
+    .faq-head .intro {
+      color: var(--ink-2);
+      line-height: 1.6;
+      font-size: 14px;
+      padding-bottom: 20px;
+    }
+    .faq-head .intro .muted { color: var(--muted); display: block; margin-top: 12px; font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; }
+
+    .faq-tabs {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding: 32px 40px;
+      border-bottom: 1px solid var(--line);
+    }
+    .faq-tab {
+      padding: 10px 18px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      cursor: pointer;
+      background: transparent;
+      color: var(--ink-2);
+      transition: all .2s;
+    }
+    .faq-tab:hover { border-color: var(--ink); }
+    .faq-tab.active {
+      background: var(--ink);
+      color: var(--bg);
+      border-color: var(--ink);
+    }
+
+    .faq-wrap {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      padding: 0 40px;
+    }
+    .faq-col {
+      display: flex;
+      flex-direction: column;
+    }
+    .faq-col.left { border-right: 1px solid var(--line); }
+
+    .faq-item {
+      border-bottom: 1px solid var(--line);
+      padding: 28px 28px 28px 0;
+    }
+    .faq-col.right .faq-item { padding-left: 28px; padding-right: 0; }
+    .faq-q {
+      display: grid;
+      grid-template-columns: 50px 1fr 24px;
+      gap: 16px;
+      cursor: pointer;
+      align-items: flex-start;
+    }
+    .faq-q .n {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      color: var(--muted);
+      padding-top: 8px;
+    }
+    .faq-q .text {
+      font-family: var(--serif);
+      font-weight: 400;
+      font-size: 22px;
+      line-height: 1.2;
+      letter-spacing: -0.01em;
+    }
+    .faq-q .toggle {
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      border: 1px solid var(--line);
+      display: grid; place-items: center;
+      font-size: 14px;
+      color: var(--ink);
+      transition: all .3s;
+      margin-top: 4px;
+    }
+    .faq-item.open .toggle {
+      background: var(--accent);
+      color: var(--white);
+      border-color: var(--accent);
+      transform: rotate(45deg);
+    }
+    .faq-a {
+      display: grid;
+      grid-template-columns: 50px 1fr 24px;
+      gap: 16px;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height .4s ease, margin-top .3s ease, opacity .3s ease;
+      opacity: 0;
+    }
+    .faq-item.open .faq-a {
+      max-height: 600px;
+      margin-top: 18px;
+      opacity: 1;
+    }
+    .faq-a .empty { }
+    .faq-a .body {
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--ink-2);
+    }
+    .faq-a .body p { margin-bottom: 10px; }
+    .faq-a .body p:last-child { margin-bottom: 0; }
+    .faq-a .body em { color: var(--accent); font-style: normal; font-weight: 500; }
+
+    /* CTA block at bottom */
+    .faq-cta {
+      margin: 80px 40px 60px;
+      padding: 60px 40px;
+      background: var(--ink);
+      color: var(--white);
+      border-radius: 12px;
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 40px;
+      align-items: center;
+    }
+    .faq-cta h3 {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(40px, 5vw, 64px);
+      line-height: 0.98;
+      letter-spacing: -0.02em;
+    }
+    .faq-cta h3 em { font-style: italic; color: var(--accent); font-weight: 400; }
+    .faq-cta .right-side {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .faq-cta .right-side p {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      line-height: 1.7;
+      text-transform: uppercase;
+      color: rgba(250,247,241,0.6);
+    }
+    .faq-cta .btn-accent { align-self: flex-start; }
+
+    @media (max-width: 900px) {
+      .faq-head { grid-template-columns: 1fr; padding: 90px 20px 32px; gap: 24px; }
+      .faq-head h1 { font-size: clamp(52px, 13vw, 84px); }
+      .faq-tabs { padding: 20px; gap: 6px; }
+      .faq-tab { padding: 7px 12px; font-size: 9px; }
+      .faq-wrap { grid-template-columns: 1fr; padding: 0 20px; }
+      .faq-col.left { border-right: none; }
+      .faq-col.right .faq-item { padding-left: 0; }
+      .faq-item { padding: 20px 0; }
+      .faq-q { grid-template-columns: 32px 1fr 24px; gap: 10px; }
+      .faq-q .text { font-size: 17px; }
+      .faq-a { grid-template-columns: 32px 1fr 24px; gap: 10px; }
+      .faq-cta { margin: 40px 16px 32px; padding: 32px 24px; grid-template-columns: 1fr; gap: 20px; }
+      .faq-cta h3 { font-size: clamp(32px, 8vw, 44px); }
+    }
+
+    @media (max-width: 640px) {
+      .faq-head { padding: 76px 16px 24px; }
+      .faq-wrap { padding: 0 16px; }
+    }
+  </style>
+</head>
+<body data-page="faq">
+<div data-chrome="top"></div>
+<main class="shell">
+  <div data-chrome="nav"></div>
+
+  <section class="faq-head">
+    <h1>Вопросы, <br/>которые <em>задают</em>.</h1>
+    <div class="intro">
+      Семнадцать лет работы с частными клиентами научили нас отвечать на одни и те же вопросы прямо и без маркетинга. Здесь — то, что спрашивают чаще всего.
+      <span class="muted">— 24 ответа · обновлено 04.2026</span>
+    </div>
+  </section>
+
+  <div class="faq-tabs" id="faqTabs">
+    <button class="faq-tab active" data-t="all">Все вопросы</button>
+    <button class="faq-tab" data-t="process">Процесс работы</button>
+    <button class="faq-tab" data-t="money">Деньги и договор</button>
+    <button class="faq-tab" data-t="tech">Строительство</button>
+    <button class="faq-tab" data-t="after">После сдачи</button>
+  </div>
+
+  <div class="faq-wrap" id="faqWrap"></div>
+
+  <div class="faq-cta">
+    <h3>Не нашли <em>ответа</em>?</h3>
+    <div class="right-side">
+      <p>— Напишите напрямую куратору. Ответ в течение рабочего дня, конфиденциально, без автоответчиков и отдела продаж.</p>
+      <a href="contact.html" class="btn btn-accent">Задать свой вопрос <span>→</span></a>
+    </div>
+  </div>
+
+  <div data-chrome="bottom"></div>
+</main>
+
+<script src="scripts/chrome.js"></script>
+<script>
+const FAQS = [
+  { cat: 'process', q: 'Как устроен процесс от первой встречи до ключа?',
+    a: '<p>Первая встреча — бесплатная, 90 минут с архитектором-куратором. Обсуждаем участок, требования, референсы.</p><p>Далее три этапа: <em>концепция</em> (6 недель), <em>рабочий проект</em> (12 недель), <em>строительство</em> (12–18 месяцев). На каждом этапе — презентация и согласование.</p>' },
+  { cat: 'money', q: 'Какой бюджет нужен для работы с Focuse?',
+    a: '<p>Минимальный бюджет резиденции под ключ — <em>от 180 млн ₽</em> в России, от 3,5 млн € в Европе. Это включает проект, стройку, инженерию и базовую отделку.</p><p>Средний чек по нашему портфелю — 340 млн ₽.</p>' },
+  { cat: 'money', q: 'Какой график оплаты по договору?',
+    a: '<p>Пять траншей: 15% на старте проекта, 25% при закладке фундамента, 25% на коробке, 25% при монолите внутренних работ, 10% при сдаче.</p><p>Все суммы фиксируются на старте в рублях. Индексации нет.</p>' },
+  { cat: 'tech', q: 'Собственная строительная бригада или субподряд?',
+    a: '<p>Основной монолитный цикл и отделка — собственная бригада из 80 человек. Узкоспециализированные работы (дерево, камень, инженерия класса Savant) — проверенные партнёры, с которыми мы работаем 8+ лет.</p>' },
+  { cat: 'process', q: 'Можно ли приехать посмотреть уже построенные резиденции?',
+    a: '<p>Да. Мы организуем посещение 2–3 готовых домов наших клиентов — по предварительной договорённости и с их согласия.</p><p>После подписания NDA показываем и объекты в стройке.</p>' },
+  { cat: 'after', q: 'Что входит в сервис после сдачи?',
+    a: '<p>10-летняя гарантия на инженерные системы и кровлю, 25-летняя — на несущие конструкции.</p><p>Плановое обслуживание каждые 6 месяцев, сезонная консервация, круглосуточная техподдержка и выезд мастера за 2 часа.</p>' },
+  { cat: 'tech', q: 'Какие материалы используются в стандартной комплектации?',
+    a: '<p>Фасад — известняк (Юра, Португалия) или клинкер ручной формовки. Окна — дуб или алюминий Schüco. Полы — инженерная доска из массива дуба.</p><p>Сантехника — Agape, Boffi, Vola. Кухни — Bulthaup, Poliform, SieMatic на выбор.</p>' },
+  { cat: 'after', q: 'Вы берёте дома на управление после сдачи?',
+    a: '<p>Да. Отдельный договор property management: круглогодичный присмотр, управление персоналом, приём гостей, логистика, документы, налоги.</p><p>По желанию — аренда дома в ваше отсутствие по закрытому листу клиентов.</p>' },
+  { cat: 'money', q: 'Возможна ли ипотека или рассрочка?',
+    a: '<p>Работаем напрямую с тремя private banking подразделениями — Сбер, ВТБ Private, Альфа-Capital. Рассрочка от застройщика — на срок строительства, без процентов, при первом взносе 50%.</p>' },
+  { cat: 'process', q: 'Берёте ли вы реконструкцию уже существующего дома?',
+    a: '<p>Берём, но редко. Критерий — архитектурная и инженерная целесообразность. В 60% случаев честнее снести и построить заново.</p><p>Аудит текущего состояния — 180 000 ₽, зачитывается в стоимость работ.</p>' },
+  { cat: 'tech', q: 'Сколько времени занимает согласование проекта?',
+    a: '<p>На наших участках (в закрытых посёлках) — 4–6 недель. На открытой земле — 3–5 месяцев в зависимости от региона.</p><p>Все процедуры ведёт наш юрист, клиент присутствует только при подписании.</p>' },
+  { cat: 'after', q: 'Работаете ли вы с интерьером и мебелью?',
+    a: '<p>Да. Внутри студии работает отдел interior design из 12 человек — архитекторы, декораторы, байеры в Милане и Париже.</p><p>Вариант «под ключ с последней подушкой» — отдельный договор, стоимость 15–25% от стройки.</p>' }
+];
+
+let activeTab = 'all';
+
+function renderFAQ() {
+  const filtered = FAQS.filter(f => activeTab === 'all' || f.cat === activeTab);
+  const half = Math.ceil(filtered.length / 2);
+  const left = filtered.slice(0, half);
+  const right = filtered.slice(half);
+
+  const itemHtml = (f, i) => `
+    <div class="faq-item" data-i="${i}">
+      <div class="faq-q">
+        <span class="n">${String(i + 1).padStart(2, '0')}</span>
+        <div class="text">${f.q}</div>
+        <div class="toggle">+</div>
+      </div>
+      <div class="faq-a">
+        <span class="empty"></span>
+        <div class="body">${f.a}</div>
+        <span class="empty"></span>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('faqWrap').innerHTML = `
+    <div class="faq-col left">${left.map((f, i) => itemHtml(f, i)).join('')}</div>
+    <div class="faq-col right">${right.map((f, i) => itemHtml(f, i + half)).join('')}</div>
+  `;
+
+  document.querySelectorAll('.faq-item').forEach(item => {
+    item.querySelector('.faq-q').addEventListener('click', () => {
+      item.classList.toggle('open');
+    });
+  });
+}
+
+document.querySelectorAll('.faq-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.faq-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    activeTab = tab.dataset.t;
+    renderFAQ();
+  });
+});
+
+renderFAQ();
+// open first item
+setTimeout(() => { document.querySelector('.faq-item')?.classList.add('open'); }, 100);
+</script>
+</body>
+</html>
